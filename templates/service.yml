@@ -1,0 +1,107 @@
+{{ if .Values.config.enablePihole }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: pihole
+  ports:
+    - port: {{ .Values.config.piholeDNSPort }}
+      name: dns-udp
+      protocol: UDP
+      targetPort: 53
+    - port: {{ .Values.config.piholeDNSPort }}
+      name: dns-tcp
+      protocol: TCP
+      targetPort: 53
+    - port: {{ .Values.config.piholeAdminPort }}
+      name: web
+      protocol: TCP
+      targetPort: 80
+{{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-miniflux-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres-miniflux
+  ports:
+    - port: 5432
+      name: postgres
+      protocol: TCP
+      targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: miniflux-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: miniflux
+  ports:
+    - port: 8080
+      name: http
+      protocol: TCP
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: excalidraw-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: excalidraw
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: qbittorrent
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+      targetPort: 8080
+    - port: 6881
+      name: torrent-tcp
+      protocol: TCP
+      targetPort: 6881
+    - port: 6881
+      name: torrent-udp
+      protocol: UDP
+      targetPort: 6881
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashy-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ClusterIP
+  selector:
+    app: dashy
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+      targetPort: 80

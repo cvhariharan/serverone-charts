@@ -1,0 +1,72 @@
+namespace: default
+
+ingress: traefik
+
+# accessible via the Host IP on port 80
+addLonghornIngress: false
+
+# used when setting up ingress with TLS, uses letsencrypt staging server
+isTest: true
+
+config:
+  timezone: "Asia/Kolkata"
+
+  enablePihole: true
+  piholeStorage: 5Gi
+  piholeWebPassword: "password"
+  piholeDNSPort: 53
+  piholeAdminPort: 8080
+  piholePVC: pihole-pvc
+  piholePVCDNSMasq: pihole-pvc-dnsmasq
+
+  postgresMinifluxPassword: "password"
+  postgresMinifluxStorage: 10Gi
+  postgresMinifluxPVC: postgres-miniflux-pvc
+
+  minifluxAdmin: "admin"
+  minifluxAdminPassword: "password"
+  minifluxHostname: "miniflux.example.com"
+
+  # if correct values are not set, traefik will generate a default certificate
+  traefikEmail: email@example.com
+  traefikDNSProvider: cloudflare
+  traefikResolvers: 1.1.1.1:53,1.0.0.1:53
+  traefikAPIKey: "1234567890"
+
+  excalidrawHostname: "excalidraw.example.com"
+
+  qbittorrentPVC: qbittorrent-pvc
+  qbittorrentStorage: 100Mi
+  qbittorrentHostname: "qb.example.com"
+
+  dashyPVC: dashy-pvc
+  dashyStorage: 100Mi
+  dashyHostname: "dashy.example.com"
+
+  # samba share for multimedia
+  mediaPVC: media-pvc
+  mediaStorage: 100Gi
+  sambaShare: "//sambashare/share"
+  sambaUsername: username
+  sambaPassword: password
+
+
+images:
+  pihole:
+    name: pihole/pihole
+    tag: latest
+  postgresMiniflux:
+    name: postgres
+    tag: 15
+  miniflux:
+    name: miniflux/miniflux
+    tag: latest
+  excalidraw:
+    name: excalidraw/excalidraw
+    tag: latest
+  qbittorrent:
+    name: linuxserver/qbittorrent
+    tag: latest
+  dashy:
+    name: lissy93/dashy
+    tag: latest

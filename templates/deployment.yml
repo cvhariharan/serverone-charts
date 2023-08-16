@@ -1,0 +1,232 @@
+{{ if .Values.config.enablePihole }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: pihole
+spec:
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      containers:
+        - name: pihole
+          image: "{{ .Values.images.pihole.name }}:{{ .Values.images.pihole.tag }}"
+          env:
+            - name: TZ
+              value: {{ .Values.config.timezone }}
+            - name: WEBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pihole-secrets
+                  key: WEBPASSWORD
+          volumeMounts:
+            - name: pihole-vol
+              mountPath: /etc/pihole
+              subPath: pihole
+            - name: pihole-vol-dnsmasq
+              mountPath: /etc/dnsmasq.d
+              subPath: dnsmasq.d
+          ports:
+            - containerPort: 53
+            - containerPort: 80
+      volumes:
+        - name: pihole-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.piholePVC }}
+        - name: pihole-vol-dnsmasq
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.piholePVCDNSMasq }}
+{{ end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-miniflux
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: postgres-miniflux
+  template:
+    metadata:
+      labels:
+        app: postgres-miniflux
+    spec:
+      containers:
+        - name: postgres-miniflux
+          image: "{{ .Values.images.postgresMiniflux.name }}:{{ .Values.images.postgresMiniflux.tag}}"
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: miniflux
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                    name: postgres-miniflux-secrets
+                    key: POSTGRESQL_PASSWORD
+            - name: POSTGRES_DATABASE
+              value: miniflux
+          volumeMounts:
+            - name: postgres-miniflux-vol
+              mountPath: /var/lib/postgresql/data
+              subPath: postgresql
+      volumes:
+        - name: postgres-miniflux-vol
+          persistentVolumeClaim:
+            claimName: postgres-miniflux-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: miniflux
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: miniflux
+  template:
+    metadata:
+      labels:
+        app: miniflux
+    spec:
+      containers:
+        - name: miniflux
+          image: "{{ .Values.images.miniflux.name }}:{{ .Values.images.miniflux.tag}}"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: RUN_MIGRATIONS
+              value: "1"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                    name: miniflux-secrets
+                    key: DATABASE_URL
+            - name: CREATE_ADMIN
+              value: "1"
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                    name: miniflux-secrets
+                    key: ADMIN_USERNAME
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                    name: miniflux-secrets
+                    key: ADMIN_PASSWORD
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: excalidraw
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: excalidraw
+  template:
+    metadata:
+      labels:
+        app: excalidraw
+    spec:
+      containers:
+        - name: excalidraw
+          image: "{{ .Values.images.excalidraw.name }}:{{ .Values.images.excalidraw.tag}}"
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbittorrent
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent
+  template:
+    metadata:
+      labels:
+        app: qbittorrent
+    spec:
+      containers:
+        - name: qbittorrent
+          image: "{{ .Values.images.qbittorrent.name }}:{{ .Values.images.qbittorrent.tag}}"
+          ports:
+            - containerPort: 8080
+            - containerPort: 6881
+          env:
+            - name: WEBUI_PORT
+              value: "8080"
+            - name: PUID
+              value: "1000"
+            - name: GUID
+              value: "1000"
+            - name: TZ
+              value: "{{ .Values.config.timezone }}"
+          volumeMounts:
+            - name: qbittorrent-vol
+              mountPath: /config
+              subPath: config
+            - name: media-vol
+              mountPath: /downloads
+      volumes:
+        - name: qbittorrent-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.qbittorrentPVC }}
+        - name: media-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.mediaPVC }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashy
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashy
+  template:
+    metadata:
+      labels:
+        app: dashy
+    spec:
+      initContainers:
+        - name: dashy-copy-config
+          image: "{{ .Values.images.alpine.name }}:{{ .Values.images.alpine.tag}}"
+          command: ["sh", "-c", "cp /dashy-config/conf.yml /dashy-vol/conf.yml"]
+          volumeMounts:
+            - name: dashy-conf
+              mountPath: /dashy-config
+            - name: dashy-vol
+              mountPath: /dashy-vol
+      containers:
+        - name: dashy
+          image: "{{ .Values.images.dashy.name }}:{{ .Values.images.dashy.tag}}"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: dashy-vol
+              mountPath: /app/public
+      volumes:
+        - name: dashy-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.dashyPVC }}
+        - name: dashy-conf
+          configMap:
+            name: dashy-config
+

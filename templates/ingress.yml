@@ -1,0 +1,113 @@
+---
+{{ if .Values.addLonghornIngress }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: longhorn-ui-ingress
+  namespace: longhorn-system
+  annotations:
+    ingressClassName: {{ .Values.ingress }}
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Exact
+          backend:
+            service: 
+              name: longhorn-frontend
+              port: 
+                number: 80
+{{ end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: miniflux-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    ingressClassName: {{ .Values.ingress }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+spec:
+  rules:
+    - host: {{ .Values.config.minifluxHostname }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: miniflux-svc
+              port: 
+                number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: excalidraw-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    ingressClassName: {{ .Values.ingress }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+spec:
+  rules:
+    - host: {{ .Values.config.excalidrawHostname }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: excalidraw-svc
+              port: 
+                number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qbittorrent-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    ingressClassName: {{ .Values.ingress }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+spec:
+  rules:
+    - host: {{ .Values.config.qbittorrentHostname }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: qbittorrent-svc
+              port: 
+                number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashy-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    ingressClassName: {{ .Values.ingress }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+spec:
+  rules:
+    - host: {{ .Values.config.dashyHostname }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: dashy-svc
+              port: 
+                number: 80

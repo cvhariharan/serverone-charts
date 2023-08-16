@@ -1,0 +1,28 @@
+
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    env:
+      - name: CF_API_EMAIL
+        valueFrom:
+          secretKeyRef:
+            key: email
+            name: traefik-cloudflare-secrets
+      - name: CF_DNS_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            key: apikey
+            name: traefik-cloudflare-secrets
+    additionalArguments:
+      - "--log.level=DEBUG"
+      - "--certificatesresolvers.le.acme.email={{ .Values.config.traefikEmail }}"
+      - "--certificatesresolvers.le.acme.storage=/data/acme.json"
+      {{ if .Values.isTest }}
+      - "--certificatesresolvers.le.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory"
+      {{ end }}
+      - "--certificatesresolvers.le.acme.dnsChallenge.provider={{ .Values.config.traefikDNSProvider }}"
+      - "--certificatesResolvers.le.acme.dnsChallenge.resolvers={{ .Values.config.traefikResolvers }}"
