@@ -229,4 +229,51 @@ spec:
         - name: dashy-conf
           configMap:
             name: dashy-config
-
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyfin
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      nodeSelector:
+        gpu: nvidia
+      containers:
+        - name: jellyfin
+          image: "{{ .Values.images.jellyfin.name }}:{{ .Values.images.jellyfin.tag}}"
+          ports:
+            - containerPort: 8096
+          env:
+            - name: PUID
+              value: "1000"
+            - name: GUID
+              value: "1000"
+            - name: TZ
+              value: "{{ .Values.config.timezone }}"
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+          volumeMounts:
+            - name: jellyfin-media-vol
+              mountPath: /data/tvshows
+              subPath: Series
+            - name: jellyfin-media-vol
+              mountPath: /data/movies
+              subPath: Movies
+            - name: jellyfin-vol
+              mountPath: /config
+      volumes:
+        - name: jellyfin-media-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.mediaPVC }}
+        - name: jellyfin-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.jellyfinPVC }}

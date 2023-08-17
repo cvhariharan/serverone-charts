@@ -111,3 +111,26 @@ spec:
               name: dashy-svc
               port: 
                 number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jellyfin-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    ingressClassName: {{ .Values.ingress }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+spec:
+  rules:
+    - host: {{ .Values.config.jellyfinHostname }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: jellyfin-svc
+              port: 
+                number: 8096

@@ -50,6 +50,10 @@ config:
   sambaUsername: username
   sambaPassword: password
 
+  jellyfinPVC: jellyfin-pvc
+  jellyfinStorage: 10Gi
+  jellyfinHostname: "jellyfin.example.com"
+
 
 images:
   pihole:
@@ -69,4 +73,7 @@ images:
     tag: latest
   dashy:
     name: lissy93/dashy
+    tag: latest
+  jellyfin:
+    name: linuxserver/jellyfin
     tag: latest

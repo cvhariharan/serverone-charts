@@ -77,3 +77,16 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.dashyStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.config.jellyfinPVC }}
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: {{ .Values.config.jellyfinStorage }}
