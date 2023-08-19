@@ -1,5 +1,10 @@
 ## SERVERONE
+Helm chart to deploy serverone services on K3S.
 
+### Deploy
+```
+helm upgrade serverone serverone/ --values values-prod.yaml
+```
 ### Services
 Included in this chart
 - Pi-Hole

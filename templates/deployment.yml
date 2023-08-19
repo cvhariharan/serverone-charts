@@ -208,7 +208,7 @@ spec:
       initContainers:
         - name: dashy-copy-config
           image: "{{ .Values.images.alpine.name }}:{{ .Values.images.alpine.tag}}"
-          command: ["sh", "-c", "cp /dashy-config/conf.yml /dashy-vol/conf.yml"]
+          command: ["sh", "-c", "cp -n /dashy-config/conf.yml /dashy-vol/conf.yml"]
           volumeMounts:
             - name: dashy-conf
               mountPath: /dashy-config
