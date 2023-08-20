@@ -54,6 +54,14 @@ config:
   jellyfinStorage: 10Gi
   jellyfinHostname: "jellyfin.example.com"
 
+  prometheusNamespace: monitoring
+  prometheusPVC: prometheus-pvc
+  prometheusStorage: 10Gi
+
+  grafanaPVC: grafana-pvc
+  grafanaStorage: 1Gi
+  grafanaHostname: "grafana.example.com"
+
 
 images:
   pihole:
@@ -77,3 +85,9 @@ images:
   jellyfin:
     name: linuxserver/jellyfin
     tag: latest
+  prometheus:
+    name: prom/prometheus
+    tag: latest
+  grafana:
+    name: grafana/grafana
+    tag: 9.5.8

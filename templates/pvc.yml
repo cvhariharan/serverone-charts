@@ -90,3 +90,29 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.jellyfinStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.config.prometheusPVC }}
+  namespace: {{ .Values.config.prometheusNamespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: smb
+  resources:
+    requests:
+      storage: {{ .Values.config.prometheusStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.config.grafanaPVC }}
+  namespace: {{ .Values.config.prometheusNamespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: {{ .Values.config.grafanaStorage }}

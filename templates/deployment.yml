@@ -277,3 +277,70 @@ spec:
         - name: jellyfin-vol
           persistentVolumeClaim:
             claimName: {{ .Values.config.jellyfinPVC }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+  namespace: {{ .Values.config.prometheusNamespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: "{{ .Values.images.prometheus.name }}:{{ .Values.images.prometheus.tag}}"
+        volumeMounts:
+        - name: prometheus-config-vol
+          mountPath: /etc/prometheus/prometheus.yml
+          subPath: prometheus.yml
+        - name: prometheus-vol
+          mountPath: /prometheus
+        ports:
+        - containerPort: 9090
+      volumes:
+      - name: prometheus-config-vol
+        configMap:
+          name: prometheus-config
+      - name: prometheus-vol
+        persistentVolumeClaim:
+          claimName: {{ .Values.config.prometheusPVC }}
+      serviceAccountName: prometheus-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: {{ .Values.config.prometheusNamespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+        labels:
+          app: grafana
+    spec:
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      containers:
+        - name: grafana
+          image: "{{ .Values.images.grafana.name }}:{{ .Values.images.grafana.tag}}"
+          volumeMounts:
+            - name: grafana-vol
+              mountPath: /var/lib/grafana
+          ports:
+            - containerPort: 3000
+      volumes:
+        - name: grafana-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.grafanaPVC }}
