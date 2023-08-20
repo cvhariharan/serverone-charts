@@ -13,6 +13,8 @@ Included in this chart
 - Excalidraw
 - QBittorrent
 - Jellyfin
+- Prometheus
+- Grafana
 
 Other services on the cluster
 - Longhorn
