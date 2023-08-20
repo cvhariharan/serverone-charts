@@ -55,19 +55,6 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.config.mediaPVC }}
-  namespace: {{ .Values.namespace }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: smb
-  resources:
-    requests:
-      storage: {{ .Values.config.mediaStorage }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: {{ .Values.config.dashyPVC }}
   namespace: {{ .Values.namespace }}
 spec:
@@ -77,6 +64,19 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.dashyStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.config.mediaPVC }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: smb
+  volumeName: {{ .Values.config.mediaVolume }}
+  resources:
+    requests:
+      storage: {{ .Values.config.mediaStorage }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

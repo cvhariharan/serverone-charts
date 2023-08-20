@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: smb.csi.k8s.io
+  name: {{ .Values.config.mediaVolume }}
+spec:
+  capacity:
+    storage: {{ .Values.config.mediaStorage }}
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: smb
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+  csi:
+    driver: smb.csi.k8s.io
+    readOnly: false
+    volumeHandle: "smb-server.{{ .Values.namespace }}.svc.cluster.local/{{ .Values.config.mediaVolume }}##"
+    volumeAttributes:
+      source: {{ .Values.config.sambaShare }}
+      subDir: {{ .Values.config.mediaSubDir }}
+    nodeStageSecretRef:
+      name: smbcreds
+      namespace: {{ .Values.namespace }}
