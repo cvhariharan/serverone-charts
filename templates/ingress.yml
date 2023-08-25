@@ -92,29 +92,6 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: dashy-ingress
-  namespace: {{ .Values.namespace }}
-  annotations:
-    ingressClassName: {{ .Values.ingress }}
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.tls.certresolver: le
-spec:
-  rules:
-    - host: {{ .Values.config.dashyHostname }}
-      http:
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service: 
-              name: dashy-svc
-              port: 
-                number: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
   name: jellyfin-ingress
   namespace: {{ .Values.namespace }}
   annotations:
@@ -157,3 +134,26 @@ spec:
               name: grafana-svc
               port: 
                 number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flame-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    ingressClassName: {{ .Values.ingress }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: le
+spec:
+  rules:
+    - host: {{ .Values.config.flameHostname }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service: 
+              name: flame-svc
+              port: 
+                number: 5005

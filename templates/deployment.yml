@@ -193,46 +193,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dashy
-  namespace: {{ .Values.namespace }}
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: dashy
-  template:
-    metadata:
-      labels:
-        app: dashy
-    spec:
-      initContainers:
-        - name: dashy-copy-config
-          image: "{{ .Values.images.alpine.name }}:{{ .Values.images.alpine.tag}}"
-          command: ["sh", "-c", "cp -n /dashy-config/conf.yml /dashy-vol/conf.yml"]
-          volumeMounts:
-            - name: dashy-conf
-              mountPath: /dashy-config
-            - name: dashy-vol
-              mountPath: /dashy-vol
-      containers:
-        - name: dashy
-          image: "{{ .Values.images.dashy.name }}:{{ .Values.images.dashy.tag}}"
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - name: dashy-vol
-              mountPath: /app/public
-      volumes:
-        - name: dashy-vol
-          persistentVolumeClaim:
-            claimName: {{ .Values.config.dashyPVC }}
-        - name: dashy-conf
-          configMap:
-            name: dashy-config
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: jellyfin
   namespace: {{ .Values.namespace }}
 spec:
@@ -268,6 +228,9 @@ spec:
             - name: jellyfin-media-vol
               mountPath: /data/movies
               subPath: {{ .Values.config.mediaMoviesDir }}
+            - name: jellyfin-media-vol
+              mountPath: /data/music
+              subPath: {{ .Values.config.mediaMusicDir }}
             - name: jellyfin-vol
               mountPath: /config
       volumes:
@@ -344,3 +307,37 @@ spec:
         - name: grafana-vol
           persistentVolumeClaim:
             claimName: {{ .Values.config.grafanaPVC }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flame
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flame
+  template:
+    metadata:
+        labels:
+          app: flame
+    spec:
+      containers:
+        - name: flame
+          image: "{{ .Values.images.flame.name }}:{{ .Values.images.flame.tag}}"
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                    name: flame-secrets
+                    key: PASSWORD
+          volumeMounts:
+            - name: flame-vol
+              mountPath: /app/data
+          ports:
+            - containerPort: 5005
+      volumes:
+        - name: flame-vol
+          persistentVolumeClaim:
+            claimName: {{ .Values.config.flamePVC }}

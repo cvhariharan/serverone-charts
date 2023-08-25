@@ -55,19 +55,6 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.config.dashyPVC }}
-  namespace: {{ .Values.namespace }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: {{ .Values.config.dashyStorage }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: {{ .Values.config.mediaPVC }}
 spec:
   accessModes:
@@ -116,3 +103,16 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.grafanaStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.config.flamePVC }}
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: {{ .Values.config.flameStorage }}

@@ -39,18 +39,20 @@ config:
   qbittorrentStorage: 100Mi
   qbittorrentHostname: "qb.example.com"
 
-  dashyPVC: dashy-pvc
-  dashyStorage: 100Mi
-  dashyHostname: "dashy.example.com"
+  flamePVC: flame-pvc
+  flameStorage: 100Mi
+  flameHostname: "flame.example.com"
+  flamePassword: "password"
 
   # samba share for multimedia
   mediaVolume: media-pv
   mediaStorage: 5000Gi
   # directory containing all media
   mediaSubDir: media
-  # sub directory for movies and tvshows
+  # sub directory for movies, tvshows and music
   mediaMoviesDir: Movies
   mediaSeriesDir: Series
+  mediaMusicDir: Music
   sambaShare: "//sambashare/share"
   sambaUsername: username
   sambaPassword: password
@@ -84,8 +86,8 @@ images:
   qbittorrent:
     name: linuxserver/qbittorrent
     tag: latest
-  dashy:
-    name: lissy93/dashy
+  flame:
+    name: pawelmalak/flame
     tag: latest
   jellyfin:
     name: linuxserver/jellyfin
