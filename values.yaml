@@ -19,6 +19,7 @@ config:
   piholePVC: pihole-pvc
   piholePVCDNSMasq: pihole-pvc-dnsmasq
 
+  enableMiniflux: true
   postgresMinifluxPassword: "password"
   postgresMinifluxStorage: 10Gi
   postgresMinifluxPVC: postgres-miniflux-pvc
@@ -33,12 +34,15 @@ config:
   traefikResolvers: 1.1.1.1:53,1.0.0.1:53
   traefikAPIKey: "1234567890"
 
+  enableExcalidraw: true
   excalidrawHostname: "excalidraw.example.com"
 
+  enableQbittorrent: true
   qbittorrentPVC: qbittorrent-pvc
   qbittorrentStorage: 100Mi
   qbittorrentHostname: "qb.example.com"
 
+  enableFlame: true
   flamePVC: flame-pvc
   flameStorage: 100Mi
   flameHostname: "flame.example.com"
@@ -57,14 +61,17 @@ config:
   sambaUsername: username
   sambaPassword: password
 
+  enableJellyfin: true
   jellyfinPVC: jellyfin-pvc
   jellyfinStorage: 10Gi
   jellyfinHostname: "jellyfin.example.com"
 
+  enablePrometheus: true
   prometheusNamespace: monitoring
   prometheusPVC: prometheus-pvc
   prometheusStorage: 10Gi
 
+  enableGrafana: true
   grafanaPVC: grafana-pvc
   grafanaStorage: 1Gi
   grafanaHostname: "grafana.example.com"
