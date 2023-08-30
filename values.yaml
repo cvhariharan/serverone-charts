@@ -97,7 +97,7 @@ images:
     name: pawelmalak/flame
     tag: latest
   jellyfin:
-    name: linuxserver/jellyfin
+    name: jellyfin/jellyfin
     tag: latest
   prometheus:
     name: prom/prometheus

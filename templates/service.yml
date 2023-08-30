@@ -22,6 +22,7 @@ spec:
       protocol: TCP
       targetPort: 80
 {{ end }}
+{{ if .Values.config.enableMiniflux }}
 ---
 apiVersion: v1
 kind: Service
@@ -52,6 +53,8 @@ spec:
       name: http
       protocol: TCP
       targetPort: 8080
+{{ end }}
+{{ if .Values.config.enableExcalidraw }}
 ---
 apiVersion: v1
 kind: Service
@@ -67,6 +70,8 @@ spec:
       name: http
       protocol: TCP
       targetPort: 80
+{{ end }}
+{{ if .Values.config.enableQbittorrent }}
 ---
 apiVersion: v1
 kind: Service
@@ -90,6 +95,8 @@ spec:
       name: torrent-udp
       protocol: UDP
       targetPort: 6881
+{{ end }}
+{{ if .Values.config.enableJellyfin }}
 ---
 apiVersion: v1
 kind: Service
@@ -105,6 +112,8 @@ spec:
       name: http
       protocol: TCP
       targetPort: 8096
+{{ end }}
+{{ if .Values.config.enablePrometheus }}
 ---
 apiVersion: v1
 kind: Service
@@ -120,6 +129,8 @@ spec:
       name: http
       protocol: TCP
       targetPort: 9090
+{{ end }}
+{{ if .Values.config.enableGrafana }}
 ---
 apiVersion: v1
 kind: Service
@@ -135,6 +146,8 @@ spec:
       name: http
       protocol: TCP
       targetPort: 3000
+{{ end }}
+{{ if .Values.config.enableFlame }}
 ---
 apiVersion: v1
 kind: Service
@@ -150,3 +163,4 @@ spec:
       name: http
       protocol: TCP
       targetPort: 5005
+{{ end }}

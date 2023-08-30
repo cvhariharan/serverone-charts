@@ -25,6 +25,7 @@ spec:
     requests:
       storage: {{ .Values.config.piholeStorage }}
 {{ end }}
+{{ if .Values.config.enableMiniflux }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -38,6 +39,8 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.postgresMinifluxStorage }}
+{{ end }}
+{{ if .Values.config.enableQbittorrent }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -51,6 +54,8 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.qbittorrentStorage }}
+{{ end }}
+{{ if .Values.config.enableJellyfin }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -77,6 +82,8 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.jellyfinStorage }}
+{{ end }}
+{{ if .Values.config.enablePrometheus }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -90,6 +97,8 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.prometheusStorage }}
+{{ end }}
+{{ if .Values.config.enableGrafana }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -103,6 +112,8 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.grafanaStorage }}
+{{ end }}
+{{ if .Values.config.enableFlame }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -116,3 +127,4 @@ spec:
   resources:
     requests:
       storage: {{ .Values.config.flameStorage }}
+{{ end }}

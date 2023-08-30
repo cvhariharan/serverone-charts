@@ -1,3 +1,5 @@
+{{ if .Values.config.enableJellyfin }}
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -24,3 +26,4 @@ spec:
     nodeStageSecretRef:
       name: smbcreds
       namespace: {{ .Values.namespace }}
+{{ end }}

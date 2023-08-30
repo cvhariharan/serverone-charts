@@ -45,6 +45,7 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Values.config.piholePVCDNSMasq }}
 {{ end }}
+{{ if .Values.config.enableMiniflux }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -124,6 +125,8 @@ spec:
                 secretKeyRef:
                     name: miniflux-secrets
                     key: ADMIN_PASSWORD
+{{ end }}
+{{ if .Values.config.enableExcalidraw }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -145,6 +148,8 @@ spec:
           image: "{{ .Values.images.excalidraw.name }}:{{ .Values.images.excalidraw.tag}}"
           ports:
             - containerPort: 80
+{{ end }}
+{{ if .Values.config.enableQbittorrent }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -189,6 +194,8 @@ spec:
         - name: media-vol
           persistentVolumeClaim:
             claimName: {{ .Values.config.mediaPVC }}
+{{ end }}
+{{ if .Values.config.enableJellyfin }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -212,24 +219,15 @@ spec:
           image: "{{ .Values.images.jellyfin.name }}:{{ .Values.images.jellyfin.tag}}"
           ports:
             - containerPort: 8096
-          env:
-            - name: PUID
-              value: "1000"
-            - name: GUID
-              value: "1000"
-            - name: TZ
-              value: "{{ .Values.config.timezone }}"
-            - name: NVIDIA_VISIBLE_DEVICES
-              value: all
           volumeMounts:
             - name: jellyfin-media-vol
-              mountPath: /data/tvshows
+              mountPath: /media/tvshows
               subPath: {{ .Values.config.mediaSeriesDir }}
             - name: jellyfin-media-vol
-              mountPath: /data/movies
+              mountPath: /media/movies
               subPath: {{ .Values.config.mediaMoviesDir }}
             - name: jellyfin-media-vol
-              mountPath: /data/music
+              mountPath: /media/music
               subPath: {{ .Values.config.mediaMusicDir }}
             - name: jellyfin-vol
               mountPath: /config
@@ -240,6 +238,8 @@ spec:
         - name: jellyfin-vol
           persistentVolumeClaim:
             claimName: {{ .Values.config.jellyfinPVC }}
+{{ end }}
+{{ if .Values.config.enablePrometheus }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -275,6 +275,8 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.config.prometheusPVC }}
       serviceAccountName: prometheus-sa
+{{ end }}
+{{ if .Values.config.enableGrafana }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -307,6 +309,8 @@ spec:
         - name: grafana-vol
           persistentVolumeClaim:
             claimName: {{ .Values.config.grafanaPVC }}
+{{ end }}
+{{ if .Values.config.enableFlame }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -341,3 +345,4 @@ spec:
         - name: flame-vol
           persistentVolumeClaim:
             claimName: {{ .Values.config.flamePVC }}
+{{ end }}

@@ -3,7 +3,6 @@ Helm chart to deploy serverone services on K3S.
 
 ### Deploy
 ```
-kubectl create namespace monitoring # for deploying prometheus and grafana
 helm upgrade --install serverone serverone/ --values values-prod.yaml
 ```
 ### Services
